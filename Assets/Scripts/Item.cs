@@ -12,8 +12,36 @@ public abstract class Item {
     public Item() {
         properties = new Dictionary<string, float>();
         actions = new HashSet<string> {
-            "discard"
+            "discard",
+            "tobelonging",
+            "toinventory"
         };
+    }
+
+    public virtual void ContextAction(string action, List<Item> from) {
+        if(action == "discard") {
+            StaticFunctions.Log($"{name} : discard");
+            from.Remove(this);
+            if (HideoutManager.instance) {
+                HideoutManager.instance.Update_All();
+            }
+        }
+        if(action == "tobelonging") {
+            if (HideoutManager.instance) {
+                Item item = this;
+                HideoutManager.instance.player.lst_belonging.Add(item);
+                from.Remove(this);
+                HideoutManager.instance.Update_All();
+            }
+        }
+        if(action == "toinventory") {
+            if(HideoutManager.instance) {
+                Item item = this;
+                HideoutManager.instance.player.lst_inventory.Add(item);
+                from.Remove(this);
+                HideoutManager.instance.Update_All();
+            }
+        }
     }
 }
 
@@ -35,6 +63,22 @@ public abstract class Eatable : Item {
     //우클릭 메뉴에 먹기 추가
     public Eatable() : base() {
         actions.Add("eat");
+    }
+    public override void ContextAction(string action, List<Item> from) {
+        base.ContextAction(action, from);
+        if (action == "eat") {
+            StaticFunctions.Log($"{name} : eat");
+        }
+    }
+}
+
+[Serializable]
+public class Meat : Eatable {
+    public Meat() : base() {
+        name = "Meat";
+        description = "생고기";
+        properties.Add("hunger", 20);
+        //todo 식중독 확률
     }
 }
 
@@ -80,6 +124,12 @@ public abstract class Equipable : Item {
     public Equipable() : base() {
         actions.Add("equip");
     }
+    public override void ContextAction(string action, List<Item> from) {
+        base.ContextAction(action, from);
+        if (action == "equip") {
+            StaticFunctions.Log($"{name} : equip");
+        }
+    }
 }
 
 [Serializable]
@@ -106,6 +156,13 @@ public class RainCoat : Equipable {
 public abstract class Useable : Item {
     public Useable() : base() {
         actions.Add("use");
+    }
+
+    public override void ContextAction(string action, List<Item> from) {
+        base.ContextAction(action, from);
+        if (action == "use") {
+            StaticFunctions.Log($"{name} : use");
+        }
     }
 }
 

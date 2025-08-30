@@ -9,9 +9,14 @@ public abstract class Animal
     public int acc;
     public int dmg;
     public Dictionary<InjureType, int> dic_injure;
+    public Dictionary<Item, int> dic_drop;
     
     public Animal() {
         dic_injure = new Dictionary<InjureType, int>();
+        dic_drop = new Dictionary<Item, int>();
+
+        //todo 임시구현
+        dic_drop.Add(new Meat(), 100);
     }
 
     public bool GetDmg(int dmg) {

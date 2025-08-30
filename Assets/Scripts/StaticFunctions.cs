@@ -21,8 +21,7 @@ public class SaveData {
     }
 }
 
-public class StaticFunctions : MonoBehaviour
-{
+public class StaticFunctions : MonoBehaviour {
     public static readonly string Scene_Start = "Scene_Start";
     public static readonly string Scene_Hideout = "Scene_Hideout";
     public static readonly string Scene_Raid = "Scene_Raid";
@@ -57,8 +56,9 @@ public class StaticFunctions : MonoBehaviour
             //초기 데이터 생성
             Debug.LogWarning("세이브 파일 없음, 새 데이터 생성");
             Player player = new Player();
-            player.lst_equiped.Add("weapon", new SurvivalKnife());
+            player.lst_equiped.Add("weapon", new List<Item> { new SurvivalKnife() });
             player.lst_belonging.Add(new Chocolate());
+            player.lst_inventory.Add(new WaterBottle());
             //날씨 생성
             List<Weather> lst_weather = new List<Weather>();
             ExtendWeather(ref lst_weather);
@@ -86,7 +86,7 @@ public class StaticFunctions : MonoBehaviour
 
     //날씨 예보
     public static Weather WeatherReport(List<Weather> lst_weather) {
-        if(lst_weather.Count > 0) {
+        if (lst_weather.Count > 0) {
             return lst_weather[0];
         }
         System.Random rand = new System.Random();
@@ -99,7 +99,7 @@ public class StaticFunctions : MonoBehaviour
         int i = 0;
         System.Random random = new System.Random();
         Dictionary<Item, int> dic_selected = new Dictionary<Item, int>();
-        switch(type) {
+        switch (type) {
             case "food":
                 if (dic_food == null) SetFood();
                 i = random.Next(0, GetTotalWeight(ref dic_food));
@@ -165,7 +165,7 @@ public class StaticFunctions : MonoBehaviour
         foreach (var item in dic_animal) {
             i -= item.Value;
             if (i < 0) {
-                switch(item.Key) {
+                switch (item.Key) {
                     case Elk:
                         return new Elk();
                     case Snake:
@@ -216,5 +216,15 @@ public class StaticFunctions : MonoBehaviour
 
     public static void Log(string msg) {
         print(msg);
+    }
+
+    public static void ClearChild(Transform parent) {
+        for (int i = parent.childCount - 1; i >= 0; i--) {
+            DestroyImmediate(parent.GetChild(i).gameObject);
+        }
+    }
+
+    public static void ClickContextMenu(string arg, Item item, List<Item> from) {
+        item.ContextAction(arg, from);
     }
 }

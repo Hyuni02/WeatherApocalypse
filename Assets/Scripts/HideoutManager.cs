@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,6 +8,8 @@ public enum Time {
 }
 
 public class HideoutManager : MonoBehaviour {
+    public static HideoutManager instance;
+
     public Player player;
     public int elapse = 1;
     public Time time;
@@ -17,25 +20,66 @@ public class HideoutManager : MonoBehaviour {
     public Button btn_stay;
     public Button btn_sleep;
 
+    [Header("Equiped")]
+    public Image img_weapon;
+    public Image img_body;
+    public Image img_bag;
+
+    [Header("Belonging")]
+    public GameObject pnl_belonging;
+    public GameObject[] arr_belonging;
+
+    [Header("Inventory")]
+    public GameObject pnl_inventory;
+    public GameObject[] arr_inventory;
+
+    [Header("Context")]
+    public GameObject pnl_invisibleClose;
+    public Transform trans_context;
+    public GameObject prefab_contextMenu;
+
 
     public void Awake() {
+        if (instance == null) {
+            instance = this;
+        }
+        else {
+            Destroy(this.gameObject);
+            return;
+        }
+
         btn_raid.onClick.AddListener(() => btn_Raid());
         btn_stay.onClick.AddListener(() => btn_Stay());
         btn_sleep.onClick.AddListener(() => btn_Sleep());
+
+        pnl_invisibleClose.GetComponent<Button>().onClick.AddListener(() => CloseContext());
     }
 
     public void Start() {
         print("하이드 아웃 진입");
         LoadData();
 
+        SetArr();
+
         Update_All();
     }
 
-    private void Update() {
-        if(Input.GetKeyDown(KeyCode.Space)) {
-            ShowWeather();
-            ShowElapse();
+    private void SetArr() {
+        List<GameObject> children = new List<GameObject>();
+        foreach (Transform child in pnl_belonging.transform) {
+            if (child.gameObject != pnl_belonging) {
+                children.Add(child.gameObject);
+            }
         }
+        arr_belonging = children.ToArray();
+
+        List<GameObject> children2 = new List<GameObject>();
+        foreach (Transform child in pnl_inventory.transform) {
+            if (child.gameObject != pnl_inventory) {
+                children2.Add(child.gameObject);
+            }
+        }
+        arr_inventory = children2.ToArray();
     }
 
     private void LoadData() {
@@ -58,6 +102,40 @@ public class HideoutManager : MonoBehaviour {
     }
 
     public void Update_Inventory() {
+        //todo 착용 장비 표시
+        img_weapon.GetComponent<ItemHolder>().init();
+        img_body.GetComponent<ItemHolder>().init();
+        img_bag.GetComponent<ItemHolder>().init();
+        foreach (var equiped in player.lst_equiped) {
+            if (equiped.Value.Count == 0) continue;
+            switch (equiped.Key) {
+                case "weapon":
+                    img_weapon.GetComponent<ItemHolder>().SetItem(equiped.Value[0], player.lst_equiped["weapon"]);
+                    break;
+                case "body":
+                    img_body.GetComponent<ItemHolder>().SetItem(equiped.Value[0], player.lst_equiped["body"]);
+                    break;
+                case "bag":
+                    img_bag.GetComponent<ItemHolder>().SetItem(equiped.Value[0], player.lst_equiped["bag"]);
+                    break;
+            }
+        }
+
+        //todo 소지품 표시
+        foreach(var btn in arr_belonging) {
+            btn.GetComponent<ItemHolder>().init();
+        }
+        for (int i = 0; i < player.lst_belonging.Count; i++) {
+            arr_belonging[i].GetComponent<ItemHolder>().SetItem(player.lst_belonging[i], player.lst_belonging);
+        }
+
+        //todo 인벤토리 표시
+        foreach (var btn in arr_inventory) {
+            btn.GetComponent<ItemHolder>().init();
+        }
+        for (int i = 0; i < player.lst_inventory.Count; i++) {
+            arr_inventory[i].GetComponent<ItemHolder>().SetItem(player.lst_inventory[i], player.lst_inventory);
+        }
 
     }
 
@@ -103,11 +181,38 @@ public class HideoutManager : MonoBehaviour {
         Update_All();
     }
 
-    private void ShowWeather() {
-        print($"Weather : {lst_weather[0]}");
+    public void OpenContext(HashSet<string> actions, Item item, List<Item> from) {
+        pnl_invisibleClose.gameObject.SetActive(true);
+        trans_context.gameObject.SetActive(true);
+
+        //컨텍스트 위치 조절
+        RectTransform rect_context = trans_context.GetComponent<RectTransform>();
+        Vector2 pos;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            rect_context.parent as RectTransform, // 부모 기준
+            Input.mousePosition,
+            null, // 카메라 (Screen Space Overlay일 때는 null)
+            out pos
+        );
+        rect_context.anchoredPosition = pos;
+
+        //todo 컨텍스트 메뉴 추가
+        foreach (string action in actions) {
+            if (action == "tobelonging" && from == player.lst_belonging) continue;
+            if (action == "toinventory" && from == player.lst_inventory) continue; 
+            GameObject menu = Instantiate(prefab_contextMenu, trans_context);
+            menu.GetComponentInChildren<TMP_Text>().text = action;
+            menu.GetComponent<Button>().onClick.AddListener(() => {
+                StaticFunctions.ClickContextMenu(action, item, from);
+                CloseContext();
+            });
+        }
     }
 
-    private void ShowElapse() {
-        print($"Elapse : {elapse}");
+    public void CloseContext() {
+        pnl_invisibleClose.gameObject.SetActive(false);
+        trans_context.gameObject.SetActive(false);
+
+        StaticFunctions.ClearChild(trans_context);
     }
 }

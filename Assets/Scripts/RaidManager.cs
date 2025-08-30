@@ -177,21 +177,42 @@ public class RaidManager : MonoBehaviour {
                 print("동물 사살");
                 btn_attack.gameObject.SetActive(false);
                 btn_run.gameObject.SetActive(false);
+                
+                //전리품 열기
+                OpenDrop();
+
                 curAnimal = null;
-                //todo 전리품 열기
             }
             else {
-                //todo 동물의 공격
+                //동물의 공격
                 curAnimal.Attack(ref player);
                 EncounterAnimal(true);
             }
         }
         else {
             print("공격이 빗나감");
-            //todo 동물의 공격
+            //동물의 공격
             curAnimal.Attack(ref player);
             EncounterAnimal(true);
         }
+    }
+
+    public void OpenDrop() {
+        //버튼 초기화
+        btn_pick.gameObject.SetActive(true);
+        btn_attack.gameObject.SetActive(false);
+        btn_run.gameObject.SetActive(false);
+
+        System.Random random = new System.Random();
+        int i = random.Next(0, StaticFunctions.GetTotalWeight(ref curAnimal.dic_drop));
+        foreach (var item in curAnimal.dic_drop) {
+            i -= item.Value;
+            if (i < 0) {
+                curItem = item.Key;
+            }
+        }
+
+        print(curItem.name);
     }
 
     public void btn_Run() {

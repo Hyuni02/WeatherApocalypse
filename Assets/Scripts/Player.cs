@@ -43,7 +43,7 @@ public class Player {
     public List<Injure> lst_injure; //부상 목록
     public List<Item> lst_belonging; //소지품 목록
     public List<Item> lst_inventory; //인벤토리 목록(레이드 내 사용 불가)
-    public Dictionary<string, Item> lst_equiped; //장착 목록
+    public Dictionary<string, List<Item>> lst_equiped; //장착 목록
 
     public Player() {
         maxHP = 100;
@@ -57,7 +57,7 @@ public class Player {
         lst_injure = new List<Injure>();
         lst_belonging = new List<Item>();
         lst_inventory = new List<Item>();
-        lst_equiped = new Dictionary<string, Item>();
+        lst_equiped = new Dictionary<string, List<Item>>();
     }
 
     //아이템 장착
@@ -78,7 +78,7 @@ public class Player {
                 lst_injure[i].duration--;
             }
 
-            //처치 되지 않은 부상 부작용 발현
+            //todo 처치 되지 않은 부상 부작용 발현
 
 
             //치료된 부상 제거
