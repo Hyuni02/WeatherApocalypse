@@ -16,18 +16,15 @@ public class HideoutManager : MonoBehaviour {
 
 
     public void Awake() {
-
         btn_raid.onClick.AddListener(() => btn_Raid());
         btn_sleep.onClick.AddListener(() => btn_Sleep());
     }
 
     public void Start() {
+        print("하이드 아웃 진입");
         LoadData();
 
-        Update_PlayerState();
-        Update_Inventory();
-        Update_GeneratorState();
-        Update_Interation();
+        Update_All();
     }
 
     private void LoadData() {
@@ -35,6 +32,13 @@ public class HideoutManager : MonoBehaviour {
         elapse = data.elapse;
         time = data.time;
         player = data.player;
+    }
+
+    public void Update_All() {
+        Update_PlayerState();
+        Update_Inventory();
+        Update_GeneratorState();
+        Update_Interation();
     }
 
     public void Update_PlayerState() {
@@ -66,5 +70,7 @@ public class HideoutManager : MonoBehaviour {
         time = Time.day;
         //todo 밤사이 이벤트 발생 구현
         StaticFunctions.SaveData(new SaveData(elapse, player, time));
+
+        Update_All();
     }
 }
