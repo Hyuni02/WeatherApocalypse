@@ -7,6 +7,7 @@ public class RaidManager : MonoBehaviour {
     public Player player;
     public int elapse = 1;
     public Time time;
+    public List<Weather> lst_weather;
 
     [Header("Component")]
     public Button btn_return;
@@ -25,11 +26,12 @@ public class RaidManager : MonoBehaviour {
         elapse = data.elapse;
         time = data.time;
         player = data.player;
+        lst_weather = data.lst_weather;
     }
 
     public void btn_Return() {
         time = Time.night;
-        StaticFunctions.SaveData(new SaveData(elapse, player, time));
+        StaticFunctions.SaveData(new SaveData(elapse, player, time, lst_weather));
         StaticFunctions.ChangeScene(StaticFunctions.Scene_Hideout);
     }
 }

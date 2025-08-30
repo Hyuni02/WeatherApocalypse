@@ -1,18 +1,34 @@
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[Serializable]
 public class SaveData {
     public int elapse;
     public Time time;
     public Player player;
+    public List<Weather> lst_weather;
 
-    public SaveData(int e, Player p, Time t) {
+    public SaveData(int e, Player p, Time t, List<Weather> lw) {
         elapse = e;
         player = p;
         time = t;
+        lst_weather = lw;
     }
+}
+
+public enum Weather {
+    sunny, 
+    heatwave, 
+    residualrain, 
+    heavyrain, 
+    fog, 
+    strongwind, 
+    heavysnow
 }
 
 public class StaticFunctions
@@ -46,7 +62,11 @@ public class StaticFunctions
             Player player = new Player();
             player.lst_equiped.Add("weapon", new SurvivalKnife());
             player.lst_belonging.Add(new Chocolate());
-            SaveData data = new SaveData(1, player, Time.day);
+            //날씨 생성
+            List<Weather> lst_weather = new List<Weather>();
+            ExtendWeather(ref lst_weather);
+
+            SaveData data = new SaveData(1, player, Time.day, lst_weather);
             SaveData(data);
             return data;
         }
@@ -56,5 +76,13 @@ public class StaticFunctions
         string json = JsonConvert.SerializeObject(data, Formatting.Indented, settings); // true → 보기 좋게 들여쓰기
         File.WriteAllText(StaticFunctions.path, json);
         Debug.LogWarning("저장 완료: " + StaticFunctions.path);
+    }
+
+    public static void ExtendWeather(ref List<Weather> lst_weather) {
+        Weather[] allWeathers = (Weather[])Enum.GetValues(typeof(Weather));
+        System.Random rand = new System.Random();
+        int count = rand.Next(2, 6);
+        Weather[] shuffled = allWeathers.OrderBy(x => rand.Next()).ToArray();
+        lst_weather.AddRange(shuffled.Take(count));
     }
 }
