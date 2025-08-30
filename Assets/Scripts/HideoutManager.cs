@@ -102,7 +102,7 @@ public class HideoutManager : MonoBehaviour {
     }
 
     public void Update_Inventory() {
-        //todo 착용 장비 표시
+        //착용 장비 표시
         img_weapon.GetComponent<ItemHolder>().init();
         img_body.GetComponent<ItemHolder>().init();
         img_bag.GetComponent<ItemHolder>().init();
@@ -121,7 +121,7 @@ public class HideoutManager : MonoBehaviour {
             }
         }
 
-        //todo 소지품 표시
+        //소지품 표시
         foreach(var btn in arr_belonging) {
             btn.GetComponent<ItemHolder>().init();
         }
@@ -129,7 +129,7 @@ public class HideoutManager : MonoBehaviour {
             arr_belonging[i].GetComponent<ItemHolder>().SetItem(player.lst_belonging[i], player.lst_belonging);
         }
 
-        //todo 인벤토리 표시
+        //인벤토리 표시
         foreach (var btn in arr_inventory) {
             btn.GetComponent<ItemHolder>().init();
         }
@@ -196,7 +196,7 @@ public class HideoutManager : MonoBehaviour {
         );
         rect_context.anchoredPosition = pos;
 
-        //todo 컨텍스트 메뉴 추가
+        //컨텍스트 메뉴 추가
         foreach (string action in actions) {
             if (action == "tobelonging" && from == player.lst_belonging) continue;
             if (action == "toinventory" && from == player.lst_inventory) continue; 

@@ -33,6 +33,11 @@ public class ItemHolder : MonoBehaviour, IPointerClickHandler {
     }
 
     public void OpenContextMenu() {
-        HideoutManager.instance.OpenContext(item.actions, item, from);
+        if (HideoutManager.instance) {
+            HideoutManager.instance.OpenContext(item.actions, item, from);
+        }
+        if (RaidManager.instance) {
+            RaidManager.instance.OpenContext(item.actions, item, from);
+        }
     }
 }

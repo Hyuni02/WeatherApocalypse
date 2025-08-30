@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class RaidManager : MonoBehaviour {
+    public static RaidManager instance;
+
     public Player player;
     public int elapse = 1;
     public Time time;
@@ -24,7 +26,29 @@ public class RaidManager : MonoBehaviour {
     public Button btn_attack;
     public GameObject pnl_inventory;
 
+    [Header("Equiped")]
+    public Image img_weapon;
+    public Image img_body;
+    public Image img_bag;
+
+    [Header("Belonging")]
+    public GameObject pnl_belonging;
+    public GameObject[] arr_belonging;
+
+    [Header("Context")]
+    public GameObject pnl_invisibleClose;
+    public Transform trans_context;
+    public GameObject prefab_contextMenu;
+
     private void Awake() {
+        if (instance == null) {
+            instance = this;
+        }
+        else {
+            Destroy(this.gameObject);
+            return;
+        }
+
         btn_return.onClick.AddListener(() => btn_Return());
         btn_search.onClick.AddListener(() => btn_Search());
         btn_inventory.onClick.AddListener(() => btn_Inventory());
@@ -32,13 +56,69 @@ public class RaidManager : MonoBehaviour {
         btn_run.onClick.AddListener(() => btn_Run());
         btn_attack.onClick.AddListener(() => btn_Attack());
         btn_closeInventory.onClick.AddListener(() => btn_CloseInventory());
+
+        pnl_invisibleClose.GetComponent<Button>().onClick.AddListener(() => CloseContext());
     }
 
     private void Start() {
         print("레이드 진입");
         LoadData();
 
+        SetArr();
+
         SetWeather();
+
+        Update_All();
+
+        pnl_inventory.SetActive(false);
+    }
+
+    public void Update_All() {
+        Update_PlayerState();
+        Update_Inventory();
+    }
+
+    public void Update_PlayerState() {
+
+    }
+
+    public void Update_Inventory() {
+        //착용 장비 표시
+        img_weapon.GetComponent<ItemHolder>().init();
+        img_body.GetComponent<ItemHolder>().init();
+        img_bag.GetComponent<ItemHolder>().init();
+        foreach (var equiped in player.lst_equiped) {
+            if (equiped.Value.Count == 0) continue;
+            switch (equiped.Key) {
+                case "weapon":
+                    img_weapon.GetComponent<ItemHolder>().SetItem(equiped.Value[0], player.lst_equiped["weapon"]);
+                    break;
+                case "body":
+                    img_body.GetComponent<ItemHolder>().SetItem(equiped.Value[0], player.lst_equiped["body"]);
+                    break;
+                case "bag":
+                    img_bag.GetComponent<ItemHolder>().SetItem(equiped.Value[0], player.lst_equiped["bag"]);
+                    break;
+            }
+        }
+
+        //소지품 표시
+        foreach (var btn in arr_belonging) {
+            btn.GetComponent<ItemHolder>().init();
+        }
+        for (int i = 0; i < player.lst_belonging.Count; i++) {
+            arr_belonging[i].GetComponent<ItemHolder>().SetItem(player.lst_belonging[i], player.lst_belonging);
+        }
+    }
+
+    private void SetArr() {
+        List<GameObject> children = new List<GameObject>();
+        foreach (Transform child in pnl_belonging.transform) {
+            if (child.gameObject != pnl_belonging) {
+                children.Add(child.gameObject);
+            }
+        }
+        arr_belonging = children.ToArray();
     }
 
     private void SetWeather() {
@@ -225,5 +305,40 @@ public class RaidManager : MonoBehaviour {
             curAnimal.Attack(ref player);
             EncounterAnimal(true);
         }
+    }
+
+    public void OpenContext(HashSet<string> actions, Item item, List<Item> from) {
+        pnl_invisibleClose.gameObject.SetActive(true);
+        trans_context.gameObject.SetActive(true);
+
+        //컨텍스트 위치 조절
+        RectTransform rect_context = trans_context.GetComponent<RectTransform>();
+        Vector2 pos;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            rect_context.parent as RectTransform, // 부모 기준
+            Input.mousePosition,
+            null, // 카메라 (Screen Space Overlay일 때는 null)
+            out pos
+        );
+        rect_context.anchoredPosition = pos;
+
+        //컨텍스트 메뉴 추가
+        foreach (string action in actions) {
+            if (action == "tobelonging" && from == player.lst_belonging) continue;
+            if (action == "toinventory") continue;
+            GameObject menu = Instantiate(prefab_contextMenu, trans_context);
+            menu.GetComponentInChildren<TMP_Text>().text = action;
+            menu.GetComponent<Button>().onClick.AddListener(() => {
+                StaticFunctions.ClickContextMenu(action, item, from);
+                CloseContext();
+            });
+        }
+    }
+
+    public void CloseContext() {
+        pnl_invisibleClose.gameObject.SetActive(false);
+        trans_context.gameObject.SetActive(false);
+
+        StaticFunctions.ClearChild(trans_context);
     }
 }

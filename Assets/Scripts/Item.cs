@@ -20,10 +20,12 @@ public abstract class Item {
 
     public virtual void ContextAction(string action, List<Item> from) {
         if(action == "discard") {
-            StaticFunctions.Log($"{name} : discard");
             from.Remove(this);
             if (HideoutManager.instance) {
                 HideoutManager.instance.Update_All();
+            }
+            if(RaidManager.instance) {
+                RaidManager.instance.Update_All();
             }
         }
         if(action == "tobelonging") {
@@ -33,6 +35,12 @@ public abstract class Item {
                 from.Remove(this);
                 HideoutManager.instance.Update_All();
             }
+            if (RaidManager.instance) {
+                Item item = this;
+                RaidManager.instance.player.lst_belonging.Add(item);
+                from.Remove(this);
+                RaidManager.instance.Update_All();
+            }
         }
         if(action == "toinventory") {
             if(HideoutManager.instance) {
@@ -40,6 +48,12 @@ public abstract class Item {
                 HideoutManager.instance.player.lst_inventory.Add(item);
                 from.Remove(this);
                 HideoutManager.instance.Update_All();
+            }
+            if (RaidManager.instance) {
+                Item item = this;
+                RaidManager.instance.player.lst_belonging.Add(item);
+                from.Remove(this);
+                RaidManager.instance.Update_All();
             }
         }
     }
