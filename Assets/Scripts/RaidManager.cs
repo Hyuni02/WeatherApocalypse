@@ -73,31 +73,44 @@ public class RaidManager : MonoBehaviour {
     }
 
     public void btn_Search() {
+        //이동 체력 계산
+        int requireHP = player.energyConsum_move;
+        requireHP += curWeather.GetProperity("energyConsum_move");
+        //todo 다리 상태 적용
+
         //이동용 체력 소모
-        if(player.curHP >= player.energyConsum_move) {
-            player.curHP -= player.energyConsum_move;
+        if(player.curHP >= requireHP) {
+            player.curHP -= requireHP;
         }
         else {
             print("체력 부족");
             return;
         }
         //날씨에 해당하는 아이템 풀에서 탐색
-        string pick = curWeather.Pick();
-        switch (pick) {
+        string type = curWeather.GetItem();
+        switch (type) {
             case "food":
             case "water":
             case "material":
             case "medical":
             case "equip":
-                print("아이템 조우");
+                FindItem(type);
                 break;
             case "animal":
                 print("야생동물 조우");
                 break;
             default:
-                print($"Pick : {pick}");
+                print($"아무것도 찾지 못했다.");
                 break;
         }
+    }
+
+    private void FindItem(string type) {
+        Item item = StaticFunctions.GetItem(type);
+        print(item.name);
+    }
+
+    private void EncounterAnimal() {
 
     }
 

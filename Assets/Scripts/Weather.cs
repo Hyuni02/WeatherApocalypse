@@ -13,16 +13,21 @@ public enum Weather {
 public class Sunny {
     public Dictionary<string, int> itemPool;
     public int totalweight;
+    public Dictionary<string, int> properties;
     //평균 날씨
     public Sunny() {
         itemPool = new Dictionary<string, int>();
+        properties = new Dictionary<string, int>();
         totalweight = 0;
 
         SetItemPool();
+        SetProperty();
 
-        foreach (var weight in itemPool.Values) {
-            totalweight += weight;
-        }
+        //foreach (var weight in itemPool.Values) {
+        //    totalweight += weight;
+        //}
+
+        totalweight = StaticFunctions.GetTotalWeight(ref itemPool);
     }
     public virtual void SetItemPool() {
         itemPool.Add("null", 50);
@@ -33,9 +38,10 @@ public class Sunny {
         itemPool.Add("medical", 5);
         itemPool.Add("equip", 3);
     }
-    public string Pick() {
+    public virtual void SetProperty() { }
+    public string GetItem() {
         System.Random random = new System.Random();
-        int rand = random.Next(0, totalweight - 1);
+        int rand = random.Next(0, totalweight);
         foreach(var item in itemPool) {
             rand -= item.Value;
             if(rand < 0) {
@@ -44,6 +50,12 @@ public class Sunny {
         }
         return null;
     }
+    public int GetProperity(string prop) {
+        if (properties.ContainsKey(prop)) {
+            return properties[prop];
+        }
+        return 0;
+    }
 }
 
 public class Heatwave : Sunny {
@@ -51,6 +63,14 @@ public class Heatwave : Sunny {
     public override void SetItemPool() {
         base.SetItemPool();
         itemPool.Remove("water");
+    }
+    //체력 소모량+
+    //식수 소모량+
+    public override void SetProperty() {
+        base.SetProperty();
+        properties.Add("energyConsum_move", 2);
+        properties.Add("energyConsum_attack", 5);
+        properties.Add("heatStroke", 20);
     }
 }
 
@@ -73,6 +93,10 @@ public class Heavyrain : Sunny {
         itemPool["animal"] = 2;
         itemPool["water"] = 4;
     }
+    public override void SetProperty() {
+        base.SetProperty();
+        properties.Add("injure", 20);
+    }
 }
 
 public class Fog : Sunny {
@@ -89,10 +113,18 @@ public class Fog : Sunny {
         itemPool["medical"] = 1;
         itemPool["equip"] = 1;
     }
+    public override void SetProperty() {
+        base.SetProperty();
+        properties.Add("injure", 20);
+    }
 }
 
 public class Windy : Sunny {
-
+    public override void SetProperty() {
+        base.SetProperty();
+        properties.Add("energyConsum_move", 2);
+        properties.Add("injure", 20);
+    }
 }
 
 public class Snow : Sunny {
@@ -102,5 +134,10 @@ public class Snow : Sunny {
         base.SetItemPool();
         itemPool["animal"] = 1;
         itemPool.Remove("food");
+    }
+    public override void SetProperty() {
+        base.SetProperty();
+        properties.Add("energyConsum_move", 2);
+        properties.Add("energyConsum_attack", 4);
     }
 }

@@ -23,6 +23,14 @@ public class Material : Item {
 }
 
 [Serializable]
+public class Fabric : Eatable {
+    public Fabric() : base() {
+        name = "Fabric";
+        description = "옷감";
+    }
+}
+
+[Serializable]
 public abstract class Eatable : Item {
     //우클릭 메뉴에 먹기 추가
     public Eatable() : base() {
@@ -36,6 +44,33 @@ public class Chocolate : Eatable {
         name = "Chocolate";
         description = "초콜릿(기본지급)";
         properties.Add("hunger", 20);
+    }
+}
+
+[Serializable]
+public class Tuna : Eatable {
+    public Tuna() : base() {
+        name = "Tuna";
+        description = "참치캔";
+        properties.Add("hunger", 25);
+    }
+}
+
+[Serializable]
+public class WaterBottle : Eatable {
+    public WaterBottle() : base() {
+        name = "WaterBottle";
+        description = "물병";
+        properties.Add("thirst", 20);
+    }
+}
+
+[Serializable]
+public class Monster : Eatable {
+    public Monster() : base() {
+        name = "Monster";
+        description = "몬스터";
+        properties.Add("thirst", 10);
     }
 }
 
@@ -58,11 +93,43 @@ public class SurvivalKnife : Equipable {
 }
 
 [Serializable]
+public class RainCoat : Equipable {
+    public RainCoat() : base() {
+        name = "RainCoat";
+        description = "우비";
+        actions.Add("repair");
+        properties.Add("waterproof", 90);
+    }
+}
+
+[Serializable]
 public abstract class Useable : Item {
     public Useable() {
         actions.Add("use");
     }
 }
 
+[Serializable]
+public class Bandage : Equipable {
+    public Bandage() : base() {
+        name = "Bandage";
+        description = "붕대";
+    }
+}
 
+[Serializable]
+public class Disinfectant : Equipable {
+    public Disinfectant() : base() {
+        name = "Disinfectant";
+        description = "소독약";
+    }
+}
+
+[Serializable]
+public class Gasoline : Equipable {
+    public Gasoline() : base() {
+        name = "Gasoline";
+        description = "휘발유";
+    }
+}
 

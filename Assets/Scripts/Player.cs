@@ -7,7 +7,8 @@ public enum InjureType {
     bruise, //Å¸¹Ú»ó
     fracture, //°ñÀı
     infection, //°¨¿°
-    bleeding //ÃâÇ÷
+    bleeding, //ÃâÇ÷
+    dehydration //Å»¼ö
 }
 
 [Serializable]
