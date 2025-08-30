@@ -38,6 +38,8 @@ public class Player {
     public int curHunger;
     public int energyConsum_move;
     public int energyConsum_attack;
+    public int acc;
+    public int dmg;
     public List<Injure> lst_injure; //부상 목록
     public List<Item> lst_belonging; //소지품 목록
     public List<Item> lst_inventory; //인벤토리 목록(레이드 내 사용 불가)
@@ -50,6 +52,8 @@ public class Player {
         curHunger = 100;
         energyConsum_move = 2;
         energyConsum_attack = 5;
+        acc = 70;
+        dmg = 8;
         lst_injure = new List<Injure>();
         lst_belonging = new List<Item>();
         lst_inventory = new List<Item>();
@@ -99,6 +103,15 @@ public class Player {
             case InjureType.bleeding:
                 Debug.Log("붕대 사용");
                 break;
+        }
+    }
+
+    public void GetDmg(Animal animal, int dmg) {
+        StaticFunctions.Log($"{animal.name}이 {dmg.ToString()}를 줌");
+        curHP -= dmg;
+
+        if(curHP <= 0) {
+            StaticFunctions.Log("플레이어 사망");
         }
     }
 }

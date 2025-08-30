@@ -23,7 +23,7 @@ public class Material : Item {
 }
 
 [Serializable]
-public class Fabric : Eatable {
+public class Fabric : Material {
     public Fabric() : base() {
         name = "Fabric";
         description = "¿Ê°¨";
@@ -104,7 +104,7 @@ public class RainCoat : Equipable {
 
 [Serializable]
 public abstract class Useable : Item {
-    public Useable() {
+    public Useable() : base() {
         actions.Add("use");
     }
 }

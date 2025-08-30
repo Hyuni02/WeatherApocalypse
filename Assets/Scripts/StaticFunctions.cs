@@ -21,7 +21,7 @@ public class SaveData {
     }
 }
 
-public class StaticFunctions
+public class StaticFunctions : MonoBehaviour
 {
     public static readonly string Scene_Start = "Scene_Start";
     public static readonly string Scene_Hideout = "Scene_Hideout";
@@ -35,6 +35,7 @@ public class StaticFunctions
     public static Dictionary<Item, int> dic_material;
     public static Dictionary<Item, int> dic_medical;
     public static Dictionary<Item, int> dic_equip;
+    public static Dictionary<Animal, int> dic_animal;
 
     public static JsonSerializerSettings settings = new JsonSerializerSettings {
         TypeNameHandling = TypeNameHandling.Auto
@@ -136,12 +137,11 @@ public class StaticFunctions
 
     public static int GetTotalWeight(ref Dictionary<string, int> dic) {
         int totalWeight = 0;
-        foreach(var weight in dic.Values) {
+        foreach (var weight in dic.Values) {
             totalWeight += weight;
         }
         return totalWeight;
     }
-
     public static int GetTotalWeight(ref Dictionary<Item, int> dic) {
         int totalWeight = 0;
         foreach (var weight in dic.Values) {
@@ -149,7 +149,38 @@ public class StaticFunctions
         }
         return totalWeight;
     }
+    public static int GetTotalWeight(ref Dictionary<Animal, int> dic) {
+        int totalWeight = 0;
+        foreach (var weight in dic.Values) {
+            totalWeight += weight;
+        }
+        return totalWeight;
+    }
 
+    //동물 확률 선택 반환
+    public static Animal GetAnimal() {
+        if (dic_animal == null) SetAnimal();
+        System.Random random = new System.Random();
+        int i = random.Next(0, GetTotalWeight(ref dic_animal));
+        foreach (var item in dic_animal) {
+            i -= item.Value;
+            if (i < 0) {
+                switch(item.Key) {
+                    case Elk:
+                        return new Elk();
+                    case Snake:
+                        return new Snake();
+                    case Boar:
+                        return new Boar();
+                    case Grizzly:
+                        return new Grizzly();
+                }
+            }
+        }
+        return null;
+    }
+
+    //아이템, 동물 확률 지정
     private static void SetFood() {
         dic_food = new Dictionary<Item, int>();
         dic_food.Add(new Chocolate(), 1);
@@ -174,5 +205,16 @@ public class StaticFunctions
         dic_equip = new Dictionary<Item, int>();
         dic_equip.Add(new SurvivalKnife(), 1);
         dic_equip.Add(new RainCoat(), 1);
+    }
+    private static void SetAnimal() {
+        dic_animal = new Dictionary<Animal, int>();
+        dic_animal.Add(new Elk(), 10);
+        dic_animal.Add(new Snake(), 7);
+        dic_animal.Add(new Boar(), 3);
+        dic_animal.Add(new Grizzly(), 1);
+    }
+
+    public static void Log(string msg) {
+        print(msg);
     }
 }

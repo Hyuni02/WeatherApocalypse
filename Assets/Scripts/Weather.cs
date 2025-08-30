@@ -32,7 +32,7 @@ public class Sunny {
     public virtual void SetItemPool() {
         itemPool.Add("null", 50);
         itemPool.Add("material", 20);
-        itemPool.Add("animal", 5);
+        itemPool.Add("animal", 5000);
         itemPool.Add("food", 10);
         itemPool.Add("water", 10);
         itemPool.Add("medical", 5);
