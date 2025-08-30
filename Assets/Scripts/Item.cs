@@ -3,19 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public abstract class Item
-{
+public abstract class Item {
     public string name;
     public string description;
     public Dictionary<string, float> properties;
-    public HashSet<string> actions; 
+    public HashSet<string> actions;
 
     public Item() {
         properties = new Dictionary<string, float>();
-        actions = new HashSet<string>();
-
-        actions.Add("discard");
+        actions = new HashSet<string> {
+            "discard"
+        };
     }
+}
+
+[Serializable]
+public class Material : Item {
+    public Material() : base() { }
 }
 
 [Serializable]
@@ -54,7 +58,7 @@ public class SurvivalKnife : Equipable {
 }
 
 [Serializable]
-public abstract class Useable: Item {
+public abstract class Useable : Item {
     public Useable() {
         actions.Add("use");
     }

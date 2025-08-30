@@ -1,4 +1,5 @@
 using System.Collections;
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +20,11 @@ public class StartManager : MonoBehaviour
     }
 
     public void btn_Quit() {
+        if (File.Exists(StaticFunctions.path)) {
+            File.Delete(StaticFunctions.path);
+        }
+        return;
+
         Application.Quit();
     }
 }

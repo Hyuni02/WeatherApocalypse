@@ -21,16 +21,6 @@ public class SaveData {
     }
 }
 
-public enum Weather {
-    sunny, 
-    heatwave, 
-    residualrain, 
-    heavyrain, 
-    fog, 
-    strongwind, 
-    heavysnow
-}
-
 public class StaticFunctions
 {
     public static readonly string Scene_Start = "Scene_Start";
