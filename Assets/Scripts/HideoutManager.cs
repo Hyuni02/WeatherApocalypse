@@ -122,7 +122,7 @@ public class HideoutManager : MonoBehaviour {
         }
 
         //소지품 표시
-        foreach(var btn in arr_belonging) {
+        foreach (var btn in arr_belonging) {
             btn.GetComponent<ItemHolder>().init();
         }
         for (int i = 0; i < player.lst_belonging.Count; i++) {
@@ -199,7 +199,8 @@ public class HideoutManager : MonoBehaviour {
         //컨텍스트 메뉴 추가
         foreach (string action in actions) {
             if (action == "tobelonging" && from == player.lst_belonging) continue;
-            if (action == "toinventory" && from == player.lst_inventory) continue; 
+            if (action == "toinventory" && from == player.lst_inventory) continue;
+            //if (action == "equip" && (from == player.lst_equiped["weapon"])) continue;
             GameObject menu = Instantiate(prefab_contextMenu, trans_context);
             menu.GetComponentInChildren<TMP_Text>().text = action;
             menu.GetComponent<Button>().onClick.AddListener(() => {

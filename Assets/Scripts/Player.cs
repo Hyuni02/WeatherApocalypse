@@ -58,6 +58,9 @@ public class Player {
         lst_belonging = new List<Item>();
         lst_inventory = new List<Item>();
         lst_equiped = new Dictionary<string, List<Item>>();
+        lst_equiped.Add("weapon", new List<Item>());
+        lst_equiped.Add("body", new List<Item>());
+        lst_equiped.Add("bag", new List<Item>());
     }
 
     //아이템 장착
@@ -68,6 +71,19 @@ public class Player {
     //아이템 해제
     public void Unequip() {
 
+    }
+
+    public void Act(int move, int hunger, int dehydra) {
+        curHP -= move;
+        curHunger -= hunger;
+
+        if(curHP <= 0) {
+            StaticFunctions.Log("플레이어 사망");
+        }
+        if(curHunger <= 0) {
+            StaticFunctions.Log("배가 고프다");
+            curHunger = 0;
+        }
     }
 
     //부상 시간 관리

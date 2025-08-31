@@ -174,7 +174,7 @@ public class RaidManager : MonoBehaviour {
 
         //이동용 체력 소모
         if(player.curHP >= requireHP) {
-            player.curHP -= requireHP;
+            player.Act(requireHP, 5, 5);
             if (run) print("무사히 도망쳤다");
         }
         else {
@@ -217,12 +217,7 @@ public class RaidManager : MonoBehaviour {
 
     public void btn_Inventory() {
         pnl_inventory.SetActive(true);
-        //todo 소지품 칸 초기화
-        //todo 장비 칸 초기화
-        //todo 몸상태 칸 초기화
-        //todo 소지품 칸 표시
-        //todo 장비 칸 표시
-        //todo 몸상태 칸 표시
+        Update_All();
     }
 
     public void btn_CloseInventory() {
@@ -243,7 +238,7 @@ public class RaidManager : MonoBehaviour {
 
         //공격용 체력 소모
         if(player.curHP >= requireHP) {
-            player.curHP -= requireHP;
+            player.Act(requireHP, 10, 10);
         }
         else {
             print("체력 부족");

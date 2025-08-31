@@ -56,8 +56,9 @@ public class StaticFunctions : MonoBehaviour {
             //초기 데이터 생성
             Debug.LogWarning("세이브 파일 없음, 새 데이터 생성");
             Player player = new Player();
-            player.lst_equiped.Add("weapon", new List<Item> { new SurvivalKnife() });
+            player.lst_equiped["weapon"] = new List<Item> { new SurvivalKnife() };
             player.lst_belonging.Add(new Chocolate());
+            player.lst_belonging.Add(new RainCoat());
             player.lst_inventory.Add(new WaterBottle());
             //날씨 생성
             List<Weather> lst_weather = new List<Weather>();
